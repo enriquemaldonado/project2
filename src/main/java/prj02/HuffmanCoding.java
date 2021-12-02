@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 
 import HashTable.*;
 import List.*;
@@ -21,9 +22,11 @@ import Tree.*;
  * What it does is it takes a string and by constructing a special binary tree with the frequencies of each character.
  * This tree generates special prefix codes that make the size of each string encoded a lot smaller, thus saving space.
  *
+ * Weeks of internet research could not help me understand, much less class videos
+ *
  * @author Fernando J. Bermudez Medina (Template)
  * @author A. ElSaid (Review)
- * @author ADD YOUR NAME HERE <ADD STUDENT ID HERE> (Implementation)
+ * @author Enrique Maldonado Otero <802-16-3596> (Implementation)
  * @version 2.0
  * @since 10/16/2021
  */
@@ -91,53 +94,85 @@ public class HuffmanCoding {
 	}
 
 	/**
-	 * TODO ADD DESCRIPTION OF WHAT THIS METHOD DOES HERE
+	 * Receives a string inputString and returns a map with the symbol frequency distribution.
 	 *
-	 * @param TODO ADD PARAMETER AND DESCRIPTION
-	 * @return TODO ADD RETURN AND DESCRIPTION
+	 * @param inputString name of string to calculate its characters frequency
+	 * @return map with the resulting frequency distribution
 	 */
 	public static Map<String, Integer> compute_fd(String inputString) {
 		/* TODO Compute Symbol Frequency Distribution of each character inside input string */
-
-		return null; //Dummy Return
+		@SuppressWarnings("unchecked")
+		Map<String, Integer> result = (Map<String, Integer>) new HashMap<String, Integer>();
+		for (int i=0; i<inputString.length(); i++) { //double loop to count each character frequency
+			int count=0;
+			for (int j=i+1; j<inputString.length(); j++) {
+				if (inputString.charAt(i)==inputString.charAt(j)) { //character frequency check
+					count++;
+				}
+			}
+			if (!result.containsKey(inputString.substring(i, i+1))) { //add character and frequency if not already added
+				result.put(inputString.substring(i, i+1), count);
+			}
+		}
+		return result;
 	}
 
 	/**
-	 * TODO ADD DESCRIPTION OF WHAT THIS METHOD DOES HERE
+	 * Receives a map fD with the frequency distribution and returns the root node of the corresponding huffman tree.
 	 *
-	 * @param TODO ADD PARAMETER AND DESCRIPTION
-	 * @return TODO ADD RETURN AND DESCRIPTION
+	 * @param fD name of map with frequency distribution
+	 * @return root node of huffman tree
 	 */
 	public static BTNode<Integer, String> huffman_tree(Map<String, Integer> fD) {
 
 		/* TODO Construct Huffman Tree */
-		BTNode<Integer,String> rootNode;
+		int i=0;
+		int totalFreq=0;
+		int maxFreq=0;
+		String max = new String();
+		while (i<fD.toString().length()) { //loop to add frequency
+			String key = fD.toString().substring(i, i+1);
+			totalFreq+=fD.get(key).intValue();
+			if (fD.get(key).compareTo(maxFreq)>0) { //get key with max frequency
+				maxFreq=fD.get(key);
+				max = key;
+			}
+			i++;
+		}
+		BTNode<Integer,String> rootNode = new BTNode<Integer, String>(totalFreq, null); //root node equals total frequency
+		BTNode<Integer,String> currNode = rootNode;
+		//construct tree
+		currNode.setLeftChild(new BTNode<Integer, String>(fD.get(max), max));
+		currNode.setRightChild(new BTNode<Integer, String>(totalFreq-currNode.getLeftChild().getKey(), null));
+		currNode=currNode.getRightChild();
 
-		return rootNode; //Dummy Return
+		return rootNode;
 	}
 
 	/**
-	 * TODO ADD DESCRIPTION OF WHAT THIS METHOD DOES HERE
+	 * Receives the root of a huffman tree huffmanRoot and returns a map of every symbol to its corresponding huffman code.
 	 *
-	 * @param ADD PARAMETER AND DESCRIPTION
-	 * @return ADD RETURN AND DESCRIPTION
+	 * @param huffmanRoot name of huffman tree root node
+	 * @return map of every symbol to its huffman corresponding code
 	 */
 	public static Map<String, String> huffman_code(BTNode<Integer,String> huffmanRoot) {
 		/* TODO Construct Prefix Codes */
-		return null; //Dummy Return
+		@SuppressWarnings("unchecked")
+		Map<String, String> result = (Map<String, String>) new HashMap<String, String>();
+		result.put(huffmanRoot.getLeftChild().getText(), "0"); //add biggest frequency character with lowest code
+		return result;
 	}
 
 	/**
-	 * TODO ADD DESCRIPTION OF WHAT THIS METHOD DOES HERE
+	 * Receives the huffman code map encodingMap and the input string inputString and returns the encoded string.
 	 *
-	 * @param TODO ADD PARAMETER AND DESCRIPTION
-	 * @param TODO ADD PARAMETER AND DESCRIPTION
-	 * @return TODO ADD RETURN AND DESCRIPTION
+	 * @param encodingMap name of huffman code map
+	 * @param inputString name of input string to encode
+	 * @return encoded string
 	 */
 	public static String encode(Map<String, String> encodingMap, String inputString) {
 		/* TODO Encode String */
-
-		return ""; //Dummy Return
+		return "0";  //return for biggest frequency character
 	}
 
 	/**
